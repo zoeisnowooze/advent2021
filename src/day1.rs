@@ -18,10 +18,7 @@ fn main() {
         .collect();
 
     println!("increased {} times", increases(&measurements));
-    println!(
-        "increased {} times",
-        increases(&convolve(&measurements))
-    );
+    println!("increased {} times", increases(&convolve(&measurements)));
 }
 
 #[test]
