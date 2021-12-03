@@ -1,94 +1,115 @@
 use std::io::{self, BufRead};
 
-fn most_common_bits(report: &Vec<String>) -> String {
-    (0..12)
-        .map(|i| {
-            let counts = report
-                .iter()
-                .fold((0, 0), |acc, x| match x.chars().nth(i).unwrap() {
-                    '0' => (acc.0 + 1, acc.1),
-                    '1' => (acc.0, acc.1 + 1),
-                    _ => acc,
-                });
-            if counts.0 > counts.1 {
-                '0'
-            } else {
-                '1'
-            }
-        })
-        .collect()
+struct Diagnostics<const N: usize> {
+    report: Vec<String>,
 }
 
-fn most_common_value(report: Vec<String>, n: usize) -> Option<String> {
-    (0..n)
-        .fold(report, |r, i| {
-            if r.len() > 1 {
-                let counts = r
-                    .iter()
-                    .fold((0, 0), |acc, x| match x.chars().nth(i).unwrap() {
-                        '0' => (acc.0 + 1, acc.1),
-                        '1' => (acc.0, acc.1 + 1),
-                        _ => acc,
-                    });
-                r.iter()
-                    .filter(|x| match x.chars().nth(i).unwrap() {
-                        '0' if counts.0 > counts.1 => true,
-                        '1' if counts.0 <= counts.1 => true,
-                        _ => false,
-                    })
-                    .cloned()
-                    .collect()
-            } else {
-                r
-            }
-        })
-        .first()
-        .cloned()
-}
+impl<const N: usize> Diagnostics<N> {
+    fn gamma_rate(&self) -> u32 {
+        u32::from_str_radix(&self.most_common_bits(), 2).unwrap()
+    }
 
-fn least_common_value(report: Vec<String>) -> Option<String> {
-    (0..12)
-        .fold(report, |r, i| {
-            if r.len() > 1 {
-                let counts = r
-                    .iter()
-                    .fold((0, 0), |acc, x| match x.chars().nth(i).unwrap() {
-                        '0' => (acc.0 + 1, acc.1),
-                        '1' => (acc.0, acc.1 + 1),
-                        _ => acc,
-                    });
-                r.iter()
-                    .filter(|x| match x.chars().nth(i).unwrap() {
-                        '0' if counts.0 <= counts.1 => true,
-                        '1' if counts.0 > counts.1 => true,
-                        _ => false,
-                    })
-                    .cloned()
-                    .collect()
-            } else {
-                r
-            }
-        })
-        .first()
-        .cloned()
+    fn epsilon_rate(&self) -> u32 {
+        0xfff ^ self.gamma_rate()
+    }
+
+    fn oxygen_generator_rating(&self) -> u32 {
+        u32::from_str_radix(&self.most_common_value(), 2).unwrap()
+    }
+
+    fn co2_scrubber_rating(&self) -> u32 {
+        u32::from_str_radix(&self.least_common_value(), 2).unwrap()
+    }
+
+    fn count_bit(&self, values: &Vec<String>, bit: usize) -> (usize, usize) {
+        values
+            .iter()
+            .fold((0, 0), |acc, x| match x.chars().nth(bit).unwrap() {
+                '0' => (acc.0 + 1, acc.1),
+                '1' => (acc.0, acc.1 + 1),
+                _ => acc,
+            })
+    }
+
+    fn most_common_bits(&self) -> String {
+        (0..N)
+            .map(|i| {
+                let (zeros, ones) = self.count_bit(&self.report, i);
+                if zeros > ones {
+                    '0'
+                } else {
+                    '1'
+                }
+            })
+            .collect()
+    }
+
+    fn filter_values(
+        &self,
+        values: Vec<String>,
+        bit: usize,
+        predicate: impl Fn(usize, usize) -> bool,
+    ) -> Vec<String> {
+        if values.len() <= 1 {
+            return values;
+        }
+        let (zeros, ones) = self.count_bit(&values, bit);
+        values
+            .iter()
+            .filter(|x| match x.chars().nth(bit).unwrap() {
+                '0' if !predicate(zeros, ones) => true,
+                '1' if predicate(zeros, ones) => true,
+                _ => false,
+            })
+            .cloned()
+            .collect()
+    }
+
+    fn most_common_value(&self) -> String {
+        (0..N)
+            .fold(self.report.clone(), |r, i| {
+                self.filter_values(r, i, |zeros, ones| ones >= zeros)
+            })
+            .first()
+            .unwrap()
+            .clone()
+    }
+
+    fn least_common_value(&self) -> String {
+        (0..N)
+            .fold(self.report.clone(), |r, i| {
+                self.filter_values(r, i, |zeros, ones| ones < zeros)
+            })
+            .first()
+            .unwrap()
+            .clone()
+    }
 }
 
 fn main() {
     const INPUT: &'static str = include_str!("../inputs/day3.txt");
     let report: Vec<String> = io::Cursor::new(INPUT).lines().map(|l| l.unwrap()).collect();
-    let gamma_rate = u32::from_str_radix(&most_common_bits(&report), 2).unwrap();
-    let epsilon_rate = 0xfff ^ gamma_rate;
-    println!("gamma rate {} epsilon rate {}", gamma_rate, epsilon_rate);
-    println!("solution {}", gamma_rate * epsilon_rate);
+    let diagnostics = Diagnostics::<12> { report: report };
 
-    let oxygen_generator_rating =
-        u32::from_str_radix(&most_common_value(report.clone(), 12).unwrap(), 2).unwrap();
-    println!("oxygen generator rating {}", oxygen_generator_rating);
+    println!(
+        "gamma rate {} epsilon rate {}",
+        diagnostics.gamma_rate(),
+        diagnostics.epsilon_rate()
+    );
+    println!(
+        "solution {}",
+        diagnostics.gamma_rate() * diagnostics.epsilon_rate()
+    );
 
-    let co2_scrubber_rating = u32::from_str_radix(&least_common_value(report).unwrap(), 2).unwrap();
-    println!("CO2 scrubber rating {}", co2_scrubber_rating);
-
-    println!("solution {}", oxygen_generator_rating * co2_scrubber_rating);
+    println!(
+        "oxygen generator rating {} CO2 scrubber rating {}",
+        diagnostics.oxygen_generator_rating(),
+        diagnostics.co2_scrubber_rating()
+    );
+    println!(
+        "solution {}",
+        diagnostics.oxygen_generator_rating() * diagnostics.co2_scrubber_rating()
+    );
 }
 
 #[test]
@@ -107,5 +128,6 @@ fn oxygen_generator_rating() {
         "00010".to_string(),
         "01010".to_string(),
     ];
-    assert_eq!(most_common_value(report, 5).unwrap(), "10111");
+    let diagnostics = Diagnostics::<5> { report: report };
+    assert_eq!(diagnostics.most_common_value(), "10111");
 }
