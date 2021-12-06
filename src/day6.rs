@@ -1,5 +1,5 @@
 fn main() {
-    const INPUT: &'static str = include_str!("../inputs/day6.txt");
+    const INPUT: &str = include_str!("../inputs/day6.txt");
     let fishes: Vec<usize> = INPUT
         .strip_suffix('\n')
         .unwrap()
@@ -7,7 +7,7 @@ fn main() {
         .map(|timer| timer.parse::<usize>().unwrap())
         .collect();
     println!("solution {}", solve(fishes.clone(), 80));
-    println!("solution {}", solve(fishes.clone(), 256));
+    println!("solution {}", solve(fishes, 256));
 }
 
 const BIRTH_RATE: usize = 7;

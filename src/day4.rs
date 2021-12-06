@@ -61,12 +61,12 @@ impl FromStr for Board {
                     .collect()
             })
             .collect::<Vec<Vec<Square>>>();
-        Ok(Board { grid: grid })
+        Ok(Board { grid })
     }
 }
 
 fn main() {
-    const INPUT: &'static str = include_str!("../inputs/day4.txt");
+    const INPUT: &str = include_str!("../inputs/day4.txt");
     solve_part1(INPUT);
     solve_part2(INPUT);
 }

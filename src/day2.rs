@@ -27,13 +27,13 @@ impl FromStr for Command {
         let units = words.1.parse()?;
         Ok(Command {
             action: action.unwrap(),
-            units: units,
+            units,
         })
     }
 }
 
 fn main() {
-    const INPUT: &'static str = include_str!("../inputs/day2.txt");
+    const INPUT: &str = include_str!("../inputs/day2.txt");
     let commands: Vec<Command> = io::Cursor::new(INPUT)
         .lines()
         .map(|l| l.unwrap().parse().unwrap())

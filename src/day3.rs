@@ -87,9 +87,9 @@ impl<const N: usize> Diagnostics<N> {
 }
 
 fn main() {
-    const INPUT: &'static str = include_str!("../inputs/day3.txt");
+    const INPUT: &str = include_str!("../inputs/day3.txt");
     let report: Vec<String> = io::Cursor::new(INPUT).lines().map(|l| l.unwrap()).collect();
-    let diagnostics = Diagnostics::<12> { report: report };
+    let diagnostics = Diagnostics::<12> { report };
 
     println!(
         "gamma rate {} epsilon rate {}",
@@ -128,6 +128,6 @@ fn oxygen_generator_rating() {
         "00010".to_string(),
         "01010".to_string(),
     ];
-    let diagnostics = Diagnostics::<5> { report: report };
+    let diagnostics = Diagnostics::<5> { report };
     assert_eq!(diagnostics.most_common_value(), "10111");
 }

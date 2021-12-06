@@ -72,7 +72,7 @@ impl fmt::Display for Vent {
 }
 
 fn main() {
-    const INPUT: &'static str = include_str!("../inputs/day5.txt");
+    const INPUT: &str = include_str!("../inputs/day5.txt");
     let vents: Vec<Vent> = INPUT.lines().map(|line| line.parse().unwrap()).collect();
     let mut map = HashMap::<(u32, u32), u32>::new();
     for vent in vents {

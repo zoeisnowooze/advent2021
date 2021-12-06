@@ -11,7 +11,7 @@ fn convolve(measurements: &Vec<u64>) -> Vec<u64> {
 }
 
 fn main() {
-    const INPUT: &'static str = include_str!("../inputs/day1.txt");
+    const INPUT: &str = include_str!("../inputs/day1.txt");
     let measurements: Vec<u64> = io::Cursor::new(INPUT)
         .lines()
         .map(|line| line.unwrap().parse().unwrap())
