@@ -23,9 +23,11 @@ fn hash(s: &str) -> u32 {
         .product()
 }
 
-fn decode_digit(patterns: &[&str], digit_positions: &[u32], output: &str) -> u32 {
+fn decode_digit<'a, I>(patterns: &[&str], digit_positions: I, output: &str) -> u32
+where
+    I: Iterator<Item = &'a u32>,
+{
     *digit_positions
-        .iter()
         .zip(patterns)
         .find(|(_i, p)| hash(p) == hash(output))
         .unwrap()
@@ -37,7 +39,7 @@ fn decode(patterns: Vec<&str>, outputs: Vec<&str>) -> u32 {
     let four = patterns.iter().find(|p| p.len() == 4).unwrap();
     let bd = find_bd(one, four);
 
-    let digit_positions: Vec<u32> = patterns
+    let digit_positions = patterns
         .iter()
         .map(|p| match p.len() {
             2 => 1,
@@ -52,18 +54,18 @@ fn decode(patterns: Vec<&str>, outputs: Vec<&str>) -> u32 {
             6 if contains(p, one) && !contains(p, four) => 0,
             _ => panic!(),
         })
-        .collect();
+        .collect::<Vec<u32>>();
 
     let mut iter = outputs.iter();
-    decode_digit(&patterns, &digit_positions, iter.next().unwrap()) * 1000
-        + decode_digit(&patterns, &digit_positions, iter.next().unwrap()) * 100
-        + decode_digit(&patterns, &digit_positions, iter.next().unwrap()) * 10
-        + decode_digit(&patterns, &digit_positions, iter.next().unwrap())
+    decode_digit(&patterns, digit_positions.iter(), iter.next().unwrap()) * 1000
+        + decode_digit(&patterns, digit_positions.iter(), iter.next().unwrap()) * 100
+        + decode_digit(&patterns, digit_positions.iter(), iter.next().unwrap()) * 10
+        + decode_digit(&patterns, digit_positions.iter(), iter.next().unwrap())
 }
 
 fn main() {
     const INPUT: &str = include_str!("../inputs/day8.txt");
-    let easy_digits: usize = INPUT
+    let easy_digits = INPUT
         .lines()
         .map(|line| {
             line.split_ascii_whitespace()
