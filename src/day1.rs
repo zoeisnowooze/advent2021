@@ -1,12 +1,12 @@
 use std::io::{self, BufRead};
 
-fn increases(measurements: &Vec<u64>) -> u64 {
+fn increases(measurements: &[u64]) -> u64 {
     measurements
         .windows(2)
         .fold(0, |acc, x| if x[1] > x[0] { acc + 1 } else { acc })
 }
 
-fn convolve(measurements: &Vec<u64>) -> Vec<u64> {
+fn convolve(measurements: &[u64]) -> Vec<u64> {
     measurements.windows(3).map(|x| x.iter().sum()).collect()
 }
 

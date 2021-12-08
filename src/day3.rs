@@ -21,7 +21,7 @@ impl<const N: usize> Diagnostics<N> {
         u32::from_str_radix(&self.least_common_value(), 2).unwrap()
     }
 
-    fn count_bit(&self, values: &Vec<String>, bit: usize) -> (usize, usize) {
+    fn count_bit(&self, values: &[String], bit: usize) -> (usize, usize) {
         values
             .iter()
             .fold((0, 0), |acc, x| match x.chars().nth(bit).unwrap() {

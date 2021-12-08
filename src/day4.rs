@@ -11,13 +11,10 @@ struct Board {
 }
 
 impl Board {
-    fn mark<'a>(&'a mut self, number: u8) {
+    fn mark(&mut self, number: u8) {
         for row in self.grid.iter_mut() {
-            match row.iter_mut().find(|square| square.number == number) {
-                Some(square) => {
-                    square.marked = true;
-                }
-                None => {}
+            if let Some(square) = row.iter_mut().find(|square| square.number == number) {
+                square.marked = true;
             }
         }
     }
