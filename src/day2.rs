@@ -1,5 +1,3 @@
-use std::io::{self, BufRead};
-use std::num::ParseIntError;
 use std::str::FromStr;
 
 enum Action {
@@ -14,30 +12,27 @@ struct Command {
 }
 
 impl FromStr for Command {
-    type Err = ParseIntError;
+    type Err = ();
 
     fn from_str(s: &str) -> Result<Command, Self::Err> {
         let words = s.split_once(' ').unwrap();
         let action = match words.0 {
-            "forward" => Ok(Action::Forward),
-            "down" => Ok(Action::Down),
-            "up" => Ok(Action::Up),
-            _ => Err(()),
+            "forward" => Action::Forward,
+            "down" => Action::Down,
+            "up" => Action::Up,
+            _ => return Err(()),
         };
-        let units = words.1.parse()?;
-        Ok(Command {
-            action: action.unwrap(),
-            units,
-        })
+        let units = words.1.parse().unwrap();
+        Ok(Command { action, units })
     }
 }
 
 fn main() {
     const INPUT: &str = include_str!("../inputs/day2.txt");
-    let commands: Vec<Command> = io::Cursor::new(INPUT)
+    let commands = INPUT
         .lines()
-        .map(|l| l.unwrap().parse().unwrap())
-        .collect();
+        .map(|line| line.parse().unwrap())
+        .collect::<Vec<Command>>();
 
     let mut position = 0;
     let mut depth = 0;

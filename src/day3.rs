@@ -1,5 +1,3 @@
-use std::io::{self, BufRead};
-
 struct Diagnostics<const N: usize> {
     report: Vec<String>,
 }
@@ -88,7 +86,7 @@ impl<const N: usize> Diagnostics<N> {
 
 fn main() {
     const INPUT: &str = include_str!("../inputs/day3.txt");
-    let report: Vec<String> = io::Cursor::new(INPUT).lines().map(|l| l.unwrap()).collect();
+    let report = INPUT.lines().map(|line| line.to_string()).collect::<Vec<String>>();
     let diagnostics = Diagnostics::<12> { report };
 
     println!(

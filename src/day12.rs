@@ -33,7 +33,7 @@ fn is_small_cave(cave: &str) -> bool {
     if cave == "start" {
         false
     } else {
-        cave.chars().all(|c| matches!(c, 'a'..='z'))
+        cave.chars().all(|c| c.is_ascii_lowercase())
     }
 }
 
