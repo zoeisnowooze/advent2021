@@ -1,34 +1,33 @@
 use std::collections::HashMap;
 
-fn expand(depth: usize, left: char, right: char, rules: &[(char, char, char)], elements: &mut HashMap<char, usize>) {
-    if depth == 0 {
-        return;
-    }
-    match rules.iter().find(|rule| rule.0 == left && rule.1 == right) {
-        Some(rule) => {
-            let counter = elements.entry(rule.2).or_insert(0);
-            *counter += 1;
-            expand(depth - 1, left, rule.2, rules, elements);
-            expand(depth - 1, rule.2, right, rules, elements);
-        }
-        None => {}
-    }
-}
-
 fn polymerize(depth: usize, template: &str, rules: &[(char, char, char)]) -> (usize, usize) {
-    let mut elements: HashMap<char, usize> = HashMap::new();
+    let chars = &template.chars().collect::<Vec<char>>();
 
-    let chars = template.chars().collect::<Vec<char>>();
-    for pair in chars.windows(2) {
-        let (left, right) = (pair[0], pair[1]);
-        let counter = elements.entry(left).or_insert(0);
-        *counter += 1;
-        expand(depth, left, right, rules, &mut elements);
+    let mut elements: HashMap<char, usize> = HashMap::new();
+    for element in chars {
+        *(elements.entry(*element).or_insert(0)) += 1;
     }
 
-    // Add the last (right-side) element.
-    let counter = elements.entry(*chars.last().unwrap()).or_insert(0);
-    *counter += 1;
+    let mut pairs: HashMap<(char, char), usize> = HashMap::new();
+    for pair in chars.windows(2) {
+        *(pairs.entry((pair[0], pair[1])).or_insert(0)) += 1;
+    }
+
+    for _ in 0..depth {
+        let mut p = pairs.clone();
+        for (pair, n) in pairs.iter() {
+            if let Some(rule) = rules
+                .iter()
+                .find(|rule| rule.0 == pair.0 && rule.1 == pair.1)
+            {
+                *(p.entry((pair.0, rule.2)).or_insert(0)) += n;
+                *(p.entry((rule.2, pair.1)).or_insert(0)) += n;
+                *(p.entry((pair.0, pair.1)).or_insert(0)) -= n;
+                *(elements.entry(rule.2).or_insert(0)) += n;
+            }
+        }
+        pairs = p;
+    }
 
     let least_common = elements.iter().min_by(|x, y| x.1.cmp(y.1)).unwrap().1;
     let most_common = elements.iter().max_by(|x, y| x.1.cmp(y.1)).unwrap().1;
@@ -38,22 +37,23 @@ fn polymerize(depth: usize, template: &str, rules: &[(char, char, char)]) -> (us
 fn main() {
     const INPUT: &str = include_str!("../inputs/day14.txt");
     let (template, rules) = INPUT.split_once("\n\n").unwrap();
-    let (least_common, most_common) = polymerize(
-        10,
-        template,
-        &rules
-            .lines()
-            .map(|rule| rule.split_once(" -> ").unwrap())
-            .map(|(a, b)| {
-                let mut pair = a.chars();
-                (
-                    pair.next().unwrap(),
-                    pair.next().unwrap(),
-                    b.chars().next().unwrap(),
-                )
-            })
-            .collect::<Vec<(char, char, char)>>(),
-    );
+    let rules = rules
+        .lines()
+        .map(|rule| rule.split_once(" -> ").unwrap())
+        .map(|(a, b)| {
+            let mut pair = a.chars();
+            (
+                pair.next().unwrap(),
+                pair.next().unwrap(),
+                b.chars().next().unwrap(),
+            )
+        })
+        .collect::<Vec<(char, char, char)>>();
+
+    let (least_common, most_common) = polymerize(10, template, &rules);
+    println!("solution {}", most_common - least_common);
+
+    let (least_common, most_common) = polymerize(40, template, &rules);
     println!("solution {}", most_common - least_common);
 }
 
@@ -79,4 +79,5 @@ fn test_polymerize() {
         ('C', 'N', 'C'),
     ];
     assert_eq!(polymerize(10, "NNCB", &rules), (161, 1749));
+    assert_eq!(polymerize(40, "NNCB", &rules), (3849876073, 2192039569602));
 }
