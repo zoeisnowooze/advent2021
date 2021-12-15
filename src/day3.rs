@@ -86,7 +86,10 @@ impl<const N: usize> Diagnostics<N> {
 
 fn main() {
     const INPUT: &str = include_str!("../inputs/day3.txt");
-    let report = INPUT.lines().map(|line| line.to_string()).collect::<Vec<String>>();
+    let report = INPUT
+        .lines()
+        .map(|line| line.to_string())
+        .collect::<Vec<String>>();
     let diagnostics = Diagnostics::<12> { report };
 
     println!(
