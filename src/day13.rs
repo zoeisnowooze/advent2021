@@ -54,14 +54,14 @@ fn main() {
         .collect::<Vec<FoldInstruction>>();
 
     let mut all_dots: HashSet<(usize, usize)> = HashSet::new();
-    for dot in dots.iter() {
+    for dot in &dots {
         all_dots.insert(instructions[0].wrap(*dot));
     }
     println!("solution {}", all_dots.len());
 
     all_dots.drain();
     for instr in instructions {
-        for dot in dots.iter() {
+        for dot in &dots {
             all_dots.insert(instr.wrap(*dot));
         }
         dots = all_dots.drain().collect();

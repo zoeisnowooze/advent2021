@@ -14,8 +14,8 @@ const BIRTH_RATE: usize = 7;
 const MATURITY: usize = 9;
 
 fn solve(fishes: Vec<usize>, days: usize) -> u64 {
-    let mut timers = [0u64; BIRTH_RATE];
-    let mut new_timers = [0u64; MATURITY];
+    let mut timers = [0_u64; BIRTH_RATE];
+    let mut new_timers = [0_u64; MATURITY];
 
     for fish in fishes {
         timers[fish] += 1;

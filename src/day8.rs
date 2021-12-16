@@ -56,7 +56,7 @@ fn decode(patterns: Vec<&str>, outputs: Vec<&str>) -> u32 {
         })
         .collect::<Vec<u32>>();
 
-    let mut iter = outputs.iter();
+    let mut iter = outputs.into_iter();
     decode_digit(&patterns, digit_positions.iter(), iter.next().unwrap()) * 1000
         + decode_digit(&patterns, digit_positions.iter(), iter.next().unwrap()) * 100
         + decode_digit(&patterns, digit_positions.iter(), iter.next().unwrap()) * 10

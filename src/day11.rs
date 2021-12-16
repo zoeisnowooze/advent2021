@@ -4,26 +4,26 @@ fn square(x: usize, y: usize) -> Vec<(usize, usize)> {
     let mut sq = Vec::new();
     if y > 0 {
         if x > 0 {
-            sq.push((x - 1, y - 1))
+            sq.push((x - 1, y - 1));
         }
         sq.push((x, y - 1));
         if x < 9 {
-            sq.push((x + 1, y - 1))
+            sq.push((x + 1, y - 1));
         }
     }
     if x > 0 {
-        sq.push((x - 1, y))
+        sq.push((x - 1, y));
     }
     if x < 9 {
-        sq.push((x + 1, y))
+        sq.push((x + 1, y));
     }
     if y < 9 {
         if x > 0 {
-            sq.push((x - 1, y + 1))
+            sq.push((x - 1, y + 1));
         }
         sq.push((x, y + 1));
         if x < 9 {
-            sq.push((x + 1, y + 1))
+            sq.push((x + 1, y + 1));
         }
     }
     sq

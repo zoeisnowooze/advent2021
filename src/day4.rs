@@ -12,7 +12,7 @@ struct Board {
 
 impl Board {
     fn mark(&mut self, number: u8) {
-        for row in self.grid.iter_mut() {
+        for row in &mut self.grid {
             if let Some(square) = row.iter_mut().find(|square| square.number == number) {
                 square.marked = true;
             }
@@ -20,7 +20,7 @@ impl Board {
     }
 
     fn is_winning(&self) -> bool {
-        for row in self.grid.iter() {
+        for row in &self.grid {
             if row.iter().all(|s| s.marked) {
                 return true;
             }
@@ -34,7 +34,7 @@ impl Board {
     }
 
     fn score(&self) -> u32 {
-        self.grid.iter().fold(0u32, |acc, row| {
+        self.grid.iter().fold(0_u32, |acc, row| {
             acc + row
                 .iter()
                 .map(|s| if s.marked { 0 } else { s.number as u32 })
@@ -78,7 +78,7 @@ fn solve_part1(input: &str) {
     let mut boards: Vec<Board> = blocks.map(|b| b.parse().unwrap()).collect();
 
     for number in drawn_numbers {
-        for board in boards.iter_mut() {
+        for board in &mut boards {
             board.mark(number);
             if board.is_winning() {
                 println!(

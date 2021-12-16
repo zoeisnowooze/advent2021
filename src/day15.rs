@@ -96,10 +96,10 @@ impl RiskMap {
     }
 }
 
-fn expand_map(risk_map: Vec<Vec<u32>>) -> Vec<Vec<u32>> {
+fn expand_map(risk_map: &[Vec<u32>]) -> Vec<Vec<u32>> {
     let mut result = Vec::new();
     for i in 0..5 {
-        for row in risk_map.iter() {
+        for row in risk_map {
             let rows = [
                 row.iter()
                     .map(|x| (x + i - 1) % 9 + 1)
@@ -128,7 +128,7 @@ fn main() {
         .lines()
         .map(|line| line.chars().map(|c| c.to_digit(10).unwrap()).collect())
         .collect::<Vec<Vec<u32>>>();
-    let mut risk_map = RiskMap::new(expand_map(risk_level));
+    let mut risk_map = RiskMap::new(expand_map(&risk_level));
     println!("solution {}", risk_map.shortest_path().unwrap());
 }
 
@@ -168,6 +168,6 @@ fn test_expand_map() {
         .lines()
         .map(|line| line.chars().map(|c| c.to_digit(10).unwrap()).collect())
         .collect::<Vec<Vec<u32>>>();
-    let mut risk_map = RiskMap::new(expand_map(risk_level));
+    let mut risk_map = RiskMap::new(expand_map(&risk_level));
     assert_eq!(risk_map.shortest_path().unwrap(), 315);
 }

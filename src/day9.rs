@@ -17,16 +17,16 @@ fn main() {
 fn neighbors(x: usize, y: usize, row: &[u32], map: &[Vec<u32>]) -> Vec<u32> {
     let mut neighbors = Vec::new();
     if x > 0 {
-        neighbors.push(row[x - 1])
+        neighbors.push(row[x - 1]);
     }
     if x < row.len() - 1 {
-        neighbors.push(row[x + 1])
+        neighbors.push(row[x + 1]);
     }
     if y > 0 {
-        neighbors.push(map[y - 1][x])
+        neighbors.push(map[y - 1][x]);
     }
     if y < map.len() - 1 {
-        neighbors.push(map[y + 1][x])
+        neighbors.push(map[y + 1][x]);
     }
     neighbors
 }

@@ -53,7 +53,7 @@ impl Tokenizer {
 
     fn score(self) -> Option<u64> {
         self.stack.map(|stack| {
-            stack.iter().rev().fold(0u64, |acc, c| {
+            stack.iter().rev().fold(0_u64, |acc, c| {
                 acc * 5
                     + match c {
                         '(' => 1,

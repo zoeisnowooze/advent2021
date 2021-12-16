@@ -15,7 +15,7 @@ fn polymerize(depth: usize, template: &str, rules: &[(char, char, char)]) -> (us
 
     for _ in 0..depth {
         let mut p = pairs.clone();
-        for (pair, n) in pairs.iter() {
+        for (pair, n) in &pairs {
             if let Some(rule) = rules
                 .iter()
                 .find(|rule| rule.0 == pair.0 && rule.1 == pair.1)
