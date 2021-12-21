@@ -29,14 +29,14 @@ impl Value {
     fn number(&self) -> Option<u32> {
         match self {
             Self::Number(n, _) => Some(*n),
-            _ => None
+            _ => None,
         }
     }
 
     fn index(&self) -> Option<usize> {
         match self {
             Self::Number(_, i) => Some(*i),
-            _ => None
+            _ => None,
         }
     }
 
@@ -104,8 +104,7 @@ fn find_exploded(tree: &Value, depth: usize) -> Option<&Value> {
         if depth == 4 && tree.is_number_pair() {
             Some(tree)
         } else {
-            find_exploded(left, depth + 1)
-                .or_else(|| find_exploded(right, depth + 1))
+            find_exploded(left, depth + 1).or_else(|| find_exploded(right, depth + 1))
         }
     } else {
         None
@@ -114,11 +113,13 @@ fn find_exploded(tree: &Value, depth: usize) -> Option<&Value> {
 
 fn find_number(tree: &mut Value, index: usize, n: u32) -> Option<&Value> {
     match tree {
-        Value::Pair(left, right) => find_number(left, index, n).or_else(|| find_number(right, index, n)),
+        Value::Pair(left, right) => {
+            find_number(left, index, n).or_else(|| find_number(right, index, n))
+        }
         Value::Number(_, i) if *i == index => {
             tree.add_number(n);
             Some(tree)
-        },
+        }
         _ => None,
     }
 }

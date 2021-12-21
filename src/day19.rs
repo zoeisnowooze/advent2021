@@ -17,15 +17,16 @@ impl FromStr for Report {
 
 fn make_diffs(reports: &Vec<Report>) -> HashSet<Report> {
     let mut set = HashSet::new();
-    for (i, report) in reports.iter().enumerate() {
-        
-    }
+    for (i, report) in reports.iter().enumerate() {}
     set
 }
 
 fn main() {
     const INPUT: &str = include_str!("../inputs/day19.txt");
-    let reports = INPUT.split("\n\n").map(|scanner| scanner.lines().map(|line| line.parse().unwrap()).collect()).collect::<Vec<Vec<Report>>>();
+    let reports = INPUT
+        .split("\n\n")
+        .map(|scanner| scanner.lines().map(|line| line.parse().unwrap()).collect())
+        .collect::<Vec<Vec<Report>>>();
     let diffs: Vec<HashSet<Report>> = reports.iter().map(make_diffs).collect();
     println!("solution {}", diffs.len());
 }
